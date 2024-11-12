@@ -45,6 +45,14 @@ class _LotteryHomePageState extends State<LotteryHomePage> {
   List<int> dltFrontArea = [];
   List<int> dltBackArea = [];
 
+  // 双色球号码
+  List<int> redBalls = [];
+  List<int> blueBall = [];
+
+  // 大乐透号码
+  List<int> frontBalls = [];
+  List<int> backBalls = [];
+
   void generateRandomNumbers() {
     setState(() {
       ssqRedBalls = _generateRandomNumbers(33, 6);
@@ -61,6 +69,42 @@ class _LotteryHomePageState extends State<LotteryHomePage> {
     numbers.shuffle();
     return numbers.take(count).toList()..sort();
   }
+
+  // 生成双色球号码
+  void generateRandomNumbers2() {
+    final random = Random();
+
+    // 生成6个不重复的红球号码
+    final redSet = <int>{};
+    while (redSet.length < 6) {
+      redSet.add(random.nextInt(33) + 1); // 红球号码范围是1-33
+    }
+    redBalls = redSet.toList()..sort();
+
+    // 生成1个蓝球号码
+    final blueSet = <int>{};
+    blueSet.add(random.nextInt(16) + 1);
+    blueBall = blueSet.toList(); // 蓝球号码范围是1-16
+
+    // 生成5个不重复的前区号码
+    final frontSet = <int>{};
+    while (frontSet.length < 5) {
+      frontSet.add(random.nextInt(35) + 1); // 前区号码范围是1-35
+    }
+    frontBalls = frontSet.toList()..sort();
+
+    // 生成2个不重复的后区号码
+    final backSet = <int>{};
+    while (backSet.length < 2) {
+      backSet.add(random.nextInt(12) + 1); // 后区号码范围是1-12
+    }
+    backBalls = backSet.toList()..sort();
+
+    setState(() {});
+
+    Vibration.vibrate();
+  }
+
 
   String getAvatar() {
     List<String> list = [
@@ -137,8 +181,8 @@ class _LotteryHomePageState extends State<LotteryHomePage> {
               ],
             ),
             const SizedBox(height: 10),
-            _buildNumberRow('红球', ssqRedBalls, Colors.red),
-            _buildNumberRow('蓝球', ssqBlueBall, Colors.blue),
+            _buildNumberRow('红球', redBalls, Colors.red),
+            _buildNumberRow('蓝球', blueBall, Colors.blue),
             const SizedBox(height: 20),
             _buildGradientText(
               '大乐透选号',
@@ -155,8 +199,8 @@ class _LotteryHomePageState extends State<LotteryHomePage> {
               ],
             ),
             const SizedBox(height: 10),
-            _buildNumberRow('前区', dltFrontArea, Colors.redAccent),
-            _buildNumberRow('后区', dltBackArea, Colors.blueAccent),
+            _buildNumberRow('前区', frontBalls, Colors.redAccent),
+            _buildNumberRow('后区', backBalls, Colors.blueAccent),
             const SizedBox(height: 30),
             Center(
               child: Container(
@@ -167,7 +211,7 @@ class _LotteryHomePageState extends State<LotteryHomePage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextButton(
-                  onPressed: generateRandomNumbers,
+                  onPressed: generateRandomNumbers2,
                   child: _buildGradientText(
                     'get Luck One',
                     25,
